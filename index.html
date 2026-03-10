@@ -1,0 +1,189 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>DNR Student Portal | Dashboard</title>
+    <link rel="stylesheet" href="style.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800;900&display=swap"
+        rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+
+<body>
+
+    <div class="container">
+        <!-- Figma Pill Header -->
+        <header onclick="app.showPage('home')">
+            <div class="logo">DNR STUDENTS</div>
+        </header>
+
+        <main>
+            <!-- Home / Dashboard Grid -->
+            <section id="home" class="active">
+                <div class="dashboard-grid">
+                    <a href="https://balu283.github.io/dnrresultscheck/" target="_blank" class="dash-card">
+                        <i class="fas fa-poll"></i>
+                        <span>Results</span>
+                    </a>
+                    <div class="dash-card" onclick="app.showPage('study-materials')">
+                        <i class="fas fa-book"></i>
+                        <span>Materials</span>
+                    </div>
+                    <div class="dash-card" onclick="app.showPage('info')">
+                        <i class="fas fa-info-circle"></i>
+                        <span>Info</span>
+                    </div>
+                    <div class="dash-card" onclick="app.showPage('events')">
+                        <i class="fas fa-calendar-alt"></i>
+                        <span>Events</span>
+                    </div>
+                    <div class="dash-card" onclick="app.showPage('timetable')">
+                        <i class="fas fa-table"></i>
+                        <span>Timetable</span>
+                    </div>
+                    <div class="dash-card" onclick="app.showPage('assignments')">
+                        <i class="fas fa-tasks"></i>
+                        <span>Assignments</span>
+                    </div>
+                    <div class="dash-card" onclick="app.showPage('lostfound')">
+                        <i class="fas fa-search"></i>
+                        <span>Lost & Found</span>
+                    </div>
+                    <div class="dash-card" onclick="app.showPage('contact')">
+                        <i class="fas fa-envelope"></i>
+                        <span>Contact</span>
+                    </div>
+                </div>
+
+                <!-- Announcements Summary on Dashboard -->
+                <div
+                    style="background: var(--card-bg); border-radius: var(--radius-card); padding: 2rem; margin-top: 2rem;">
+                    <h2 style="margin-bottom: 1.5rem; text-transform: uppercase; letter-spacing: 1px;">Announcements
+                    </h2>
+                    <div id="announcements-summary">
+                        <p>Fetching latest announcements...</p>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Detail Sections -->
+            <section id="study-materials">
+                <div class="back-btn" onclick="app.showPage('home')">
+                    <i class="fas fa-arrow-left"></i> Home
+                </div>
+                <h1 class="section-title">Study Materials</h1>
+                <div class="group-selector-container">
+                    <select class="group-select" onchange="app.setGroup(this.value)">
+                        <!-- Dynamic Options -->
+                    </select>
+                    <select class="semester-select" onchange="app.setSemester(this.value)">
+                        <!-- Dynamic Options -->
+                    </select>
+                </div>
+                <div id="materials-container" class="grid">
+                    <!-- Dynamic Content -->
+                </div>
+            </section>
+
+            <section id="info">
+                <div class="back-btn" onclick="app.showPage('home')">
+                    <i class="fas fa-arrow-left"></i> Home
+                </div>
+                <h1 class="section-title">Important Information</h1>
+                <div id="info-container">
+                    <!-- Dynamic Content -->
+                </div>
+            </section>
+
+            <section id="events">
+                <div class="back-btn" onclick="app.showPage('home')">
+                    <i class="fas fa-arrow-left"></i> Home
+                </div>
+                <h1 class="section-title">Upcoming Events</h1>
+                <div id="events-container">
+                    <!-- Dynamic Content -->
+                </div>
+            </section>
+
+            <section id="timetable">
+                <div class="back-btn" onclick="app.showPage('home')">
+                    <i class="fas fa-arrow-left"></i> Home
+                </div>
+                <h1 class="section-title">Weekly Timetable</h1>
+                <div class="group-selector-container">
+                    <select class="group-select" onchange="app.setGroup(this.value)">
+                        <!-- Dynamic Options -->
+                    </select>
+                    <select class="semester-select" onchange="app.setSemester(this.value)">
+                        <!-- Dynamic Options -->
+                    </select>
+                    <button class="print-btn" onclick="app.printTimetable()">
+                        <i class="fas fa-print"></i> Print
+                    </button>
+                </div>
+                <div class="table-container">
+                    <table id="timetable-table">
+                        <thead id="timetable-header"></thead>
+                        <tbody id="timetable-body"></tbody>
+                    </table>
+                </div>
+                <div id="staff-legend-container"></div>
+            </section>
+
+            <section id="assignments">
+                <div class="back-btn" onclick="app.showPage('home')">
+                    <i class="fas fa-arrow-left"></i> Home
+                </div>
+                <h1 class="section-title">Assignments</h1>
+                <div class="group-selector-container">
+                    <select class="group-select" onchange="app.setGroup(this.value)">
+                        <!-- Dynamic Options -->
+                    </select>
+                    <select class="semester-select" onchange="app.setSemester(this.value)">
+                        <!-- Dynamic Options -->
+                    </select>
+                </div>
+                <div id="assignments-container">
+                    <!-- Dynamic Content -->
+                </div>
+            </section>
+
+            <section id="lostfound">
+                <div class="back-btn" onclick="app.showPage('home')">
+                    <i class="fas fa-arrow-left"></i> Home
+                </div>
+                <h1 class="section-title">Lost & Found</h1>
+                <div id="lostfound-container">
+                    <!-- Dynamic Content -->
+                </div>
+            </section>
+
+            <section id="contact">
+                <div class="back-btn" onclick="app.showPage('home')">
+                    <i class="fas fa-arrow-left"></i> Home
+                </div>
+                <h1 class="section-title">Contact Us</h1>
+                <div class="info-item">
+                    <h3>Email</h3>
+                    <p>balajinamana14@gmail.com</p>
+                </div>
+                <div class="info-item">
+                    <h3>WhatsApp</h3>
+                    <p>Directly chat with our helpdesk</p>
+                    <a href="https://wa.me/911234567890" target="_blank" class="back-btn"
+                        style="margin-top: 1rem; color: #25D366;">
+                        <i class="fab fa-whatsapp"></i> Click to Chat
+                    </a>
+                </div>
+            </section>
+        </main>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+
+</html>
