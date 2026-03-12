@@ -250,9 +250,13 @@ const app = {
             materials: [
                 { Title: 'Mathematics', Link: '#', Group: 'Group A', Semester: 'Semester 1' },
                 { Title: 'Calculus Advanced', Link: '#', Group: 'Group B', Semester: 'Semester 1' },
-                { Title: 'Data Structures', Link: '#', Group: 'BSC-CS-2', Semester: 'Semester 2' },
+                { Title: 'Data Structures', Link: 'https://limewire.com/d/3aijV#QcSqGKPg1S', Group: 'BSC-CS-2', Semester: 'Semester 2' },
                 { Title: 'Algorithms', Link: '#', Group: 'Group B', Semester: 'Semester 2' },
-                { Title: 'Computer Networks', Link: '#', Group: 'Group A', Semester: 'Semester 1' }
+                { Title: 'Computer Networks', Link: '#', Group: 'Group A', Semester: 'Semester 1' },
+                { Title: 'ARTIFICIAL INTELLIGENCE', Link: '#', Group: 'BSC-CS-2', Semester: 'Semester 2' },
+                { Title: 'DLD(Digital Logic Design)', Link: '#', Group: 'BSC-CS-2', Semester: 'Semester 2' },
+                { Title: 'OA (Office Automation', Link: '#', Group: 'BSC-CS-2', Semester: 'Semester 1' },
+                { Title: 'C-Programming', Link: 'https://drive.google.com/file/d/1DFUBzYd18INl7E5Wnp4i4lRYo_UwvNfg/view?usp=drivesdk', Group: 'BSC-CS-2', Semester: 'Semester 1' }
             ],
             timetable: [], // DO NOT EDIT: This is automatically filled from your Google Sheet CSV links
             // College events
@@ -294,11 +298,11 @@ const app = {
         const container = document.getElementById('materials-container');
         container.innerHTML = `<div class="dashboard-grid" style="margin-top: 1rem; width: 100%;">
             ${data.map(item => `
-                <div class="dash-card" style="height: 150px;">
+                <a href="${item.Link}" target="_blank" class="dash-card" style="text-decoration: none; display: flex;">
                     <i class="fas fa-file-pdf"></i>
                     <span>${item.Title}</span>
                     <small style="margin-top: 0.5rem; opacity: 0.6;">${item.Group}</small>
-                </div>
+                </a>
             `).join('')}
         </div>`;
     },
