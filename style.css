@@ -23,10 +23,21 @@
 /* Dual Selector Layout */
 .group-selector-container {
     display: flex;
-    justify-content: center;
-    gap: 1rem;
+    justify-content: space-between;
+    align-items: center;
+    gap: 1.5rem;
     margin-bottom: 2.5rem;
     flex-wrap: wrap;
+    background: rgba(255, 255, 255, 0.2);
+    padding: 1.5rem;
+    border-radius: var(--radius-card);
+    border: 1px solid rgba(255, 255, 255, 0.3);
+}
+
+.selector-form {
+    display: flex;
+    gap: 1rem;
+    flex-grow: 1;
 }
 
 .semester-select,
@@ -115,16 +126,81 @@
         text-align: center;
         border-bottom: 2px solid #000;
     }
+}
 
-    table {
+/* Timetable Specific Styling */
+.table-container {
+    width: 100%;
+    overflow-x: auto;
+    background: white;
+    border-radius: 20px;
+    box-shadow: var(--shadow);
+    margin-bottom: 2rem;
+    padding: 1px; /* Ensure border radius clipping doesn't hide borders */
+}
+
+#timetable-table {
+    width: 100%;
+    border-collapse: collapse;
+    min-width: 600px; /* Prevent too much squishing */
+}
+
+#timetable-table th {
+    background: var(--header-dark);
+    color: white;
+    font-weight: 700;
+    text-align: left;
+    padding: 1.2rem 1rem;
+    text-transform: uppercase;
+    font-size: 0.85rem;
+    letter-spacing: 1px;
+}
+
+#timetable-table th:first-child {
+    border-top-left-radius: 18px;
+}
+
+#timetable-table th:last-child {
+    border-top-right-radius: 18px;
+}
+
+#timetable-table td {
+    padding: 1.2rem 1rem;
+    border-bottom: 1px solid rgba(0, 0, 0, 0.05);
+    font-size: 0.95rem;
+    color: var(--text-primary);
+    font-weight: 500;
+}
+
+#timetable-table tr:last-child td {
+    border-bottom: none;
+}
+
+#timetable-table tr:hover {
+    background: #f8fafc;
+}
+
+#timetable-table td:first-child {
+    font-weight: 800;
+    color: var(--accent);
+    background: #f1f5f9;
+}
+
+/* Specific cell alignment for periods */
+#timetable-table td:not(:first-child) {
+    text-align: center;
+}
+
+#timetable-table th:not(:first-child) {
+    text-align: center;
+}
+
+@media print {
+    #timetable-table {
         border: 1px solid #000;
-        width: 100%;
     }
-
-    th,
-    td {
+    #timetable-table th, #timetable-table td {
         border: 1px solid #ddd;
-        padding: 8px;
         color: black !important;
     }
 }
@@ -208,6 +284,13 @@ header {
 }
 
 /* Content Sections */
+.section-title {
+    font-size: 2.5rem;
+    font-weight: 800;
+    margin-bottom: 2.5rem;
+    color: var(--text-primary);
+}
+
 section {
     display: none;
     background: var(--card-bg);
@@ -248,41 +331,290 @@ section.active {
     color: var(--accent);
 }
 
-/* Section Specific Styling */
-.section-title {
-    font-size: 2rem;
-    margin-bottom: 2rem;
-    border-bottom: 2px solid rgba(0, 0, 0, 0.1);
-    padding-bottom: 1rem;
+/* Report Button Styling */
+.report-btn {
+    background: var(--accent);
+    color: white;
+    padding: 1rem 2rem;
+    border-radius: var(--radius-pill);
+    border: none;
+    font-weight: 700;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.75rem;
+    transition: var(--transition);
+    box-shadow: 0 10px 15px -3px rgba(79, 70, 229, 0.4);
+    cursor: pointer;
+    font-size: 1rem;
 }
 
-.info-item {
-    background: rgba(255, 255, 255, 0.3);
+.report-btn:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 20px 25px -5px rgba(79, 70, 229, 0.5);
+    filter: brightness(1.1);
+}
+
+.report-btn i {
+    font-size: 1.2rem;
+}
+
+/* Form & Grid Styling */
+.form-container {
+    background: rgba(255, 255, 255, 0.4);
+    padding: 2.5rem;
+    border-radius: var(--radius-card);
+    border: 1px solid rgba(255, 255, 255, 0.5);
+    backdrop-filter: blur(10px);
+    margin-bottom: 3rem;
+    animation: slideDown 0.4s ease-out;
+}
+
+@keyframes slideDown {
+    from { opacity: 0; transform: translateY(-20px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+.form-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 1.5rem;
+}
+
+.form-group {
+    display: flex;
+    flex-direction: column;
+    gap: 0.6rem;
+}
+
+.full-width {
+    grid-column: span 2;
+}
+
+.form-group label {
+    font-weight: 700;
+    font-size: 0.9rem;
+    color: var(--text-primary);
+    margin-left: 0.5rem;
+}
+
+.form-group input,
+.form-group select,
+.form-group textarea {
+    padding: 0.9rem 1.2rem;
+    border-radius: 15px;
+    border: 2px solid rgba(0, 0, 0, 0.05);
+    background: white;
+    font-size: 0.95rem;
+    transition: var(--transition);
+}
+
+.form-group input:focus,
+.form-group select:focus,
+.form-group textarea:focus {
+    border-color: var(--accent);
+    outline: none;
+    box-shadow: 0 0 0 4px rgba(79, 70, 229, 0.1);
+}
+
+.submit-btn {
+    width: 100%;
+    margin-top: 2rem;
+    padding: 1.2rem;
+    background: var(--accent);
+    color: white;
+    border: none;
+    border-radius: var(--radius-pill);
+    font-weight: 800;
+    font-size: 1rem;
+    cursor: pointer;
+    transition: var(--transition);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 0.8rem;
+    box-shadow: 0 10px 20px -5px rgba(79, 70, 229, 0.3);
+}
+
+.submit-btn:hover {
+    transform: translateY(-3px);
+    filter: brightness(1.1);
+    box-shadow: 0 15px 25px -5px rgba(79, 70, 229, 0.4);
+}
+
+.submit-btn:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+    transform: none;
+}
+
+/* Item Grid & Card Improvements */
+.grid-items {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+    gap: 2rem;
+    margin-top: 2rem;
+}
+
+.item-card {
+    background: white;
+    border-radius: 25px;
+    overflow: hidden;
+    box-shadow: var(--shadow);
+    transition: var(--transition);
+    position: relative;
+    border: 1px solid rgba(0, 0, 0, 0.05);
+}
+
+.item-card:hover {
+    transform: translateY(-8px);
+    box-shadow: 0 20px 30px -10px rgba(0, 0, 0, 0.15);
+}
+
+.item-img-container {
+    width: 100%;
+    height: 200px;
+    background: #f1f5f9;
+    overflow: hidden;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.item-img-container img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+.item-img-placeholder {
+    font-size: 3rem;
+    color: #cbd5e1;
+}
+
+.item-details {
     padding: 1.5rem;
-    border-radius: 20px;
+}
+
+.item-category-tag {
+    display: inline-block;
+    padding: 0.3rem 0.8rem;
+    background: rgba(79, 70, 229, 0.1);
+    color: var(--accent);
+    border-radius: 8px;
+    font-size: 0.75rem;
+    font-weight: 700;
+    margin-bottom: 0.8rem;
+}
+
+.item-title {
+    font-size: 1.2rem;
+    font-weight: 800;
+    margin-bottom: 0.5rem;
+    color: var(--text-primary);
+}
+
+.item-meta {
+    font-size: 0.85rem;
+    color: var(--text-muted);
+    margin-bottom: 1rem;
+    display: flex;
+    flex-direction: column;
+    gap: 0.3rem;
+}
+
+.item-meta i {
+    width: 16px;
+    margin-right: 5px;
+    color: var(--accent);
+    opacity: 0.7;
+}
+
+.item-description {
+    font-size: 0.9rem;
+    color: var(--text-muted);
+    line-height: 1.5;
     margin-bottom: 1.5rem;
 }
 
-/* Table Design */
-.table-container {
-    overflow-x: auto;
+.info-item {
+    background: rgba(255, 255, 255, 0.4);
+    padding: 2.5rem;
+    border-radius: var(--radius-card);
+    border: 1px solid rgba(255, 255, 255, 0.5);
+    backdrop-filter: blur(10px);
+    margin-bottom: 2rem;
+    box-shadow: var(--shadow);
 }
 
-table {
-    width: 100%;
-    border-collapse: collapse;
-}
-
-th,
-td {
-    padding: 1.2rem;
-    text-align: left;
-    border-bottom: 1px solid rgba(0, 0, 0, 0.1);
-}
-
-th {
-    font-weight: 800;
+.info-item h3 {
+    margin-bottom: 1.2rem;
     color: var(--accent);
+    font-weight: 800;
+    font-size: 1.4rem;
+}
+
+.info-content {
+    line-height: 1.7;
+    color: var(--text-primary);
+    font-size: 1rem;
+}
+
+.info-content iframe {
+    width: 100% !important;
+    max-width: 100%;
+    aspect-ratio: 16 / 9;
+    height: auto !important;
+    border-radius: 15px;
+    margin: 1.5rem 0;
+    box-shadow: 0 10px 25px rgba(0,0,0,0.1);
+    border: none;
+}
+
+@media (max-width: 600px) {
+    /* Form collapses to single column */
+    .form-grid {
+        grid-template-columns: 1fr;
+    }
+    .full-width {
+        grid-column: span 1;
+    }
+    .form-container {
+        padding: 1.2rem;
+        border-radius: 20px;
+        margin-bottom: 2rem;
+    }
+
+    /* Lost & Found item cards: 1 column on mobile */
+    .grid-items,
+    #lostfound-items-container {
+        grid-template-columns: 1fr !important;
+        gap: 1.2rem;
+    }
+
+    /* Smaller image height on mobile cards */
+    .item-img-container {
+        height: 160px;
+    }
+
+    /* Info items less padding on mobile */
+    .info-item {
+        padding: 1.5rem;
+    }
+    .info-item h3 {
+        font-size: 1.2rem;
+    }
+
+    /* Report button full width */
+    .report-btn {
+        width: 100%;
+        justify-content: center;
+    }
+
+    /* Submit button text stays readable */
+    .submit-btn {
+        font-size: 0.95rem;
+        padding: 1rem;
+    }
 }
 
 /* Scrollbar */
@@ -423,10 +755,20 @@ th {
     section {
         padding: 1.5rem;
         border-radius: 20px;
+        overflow-x: hidden;
+    }
+
+    .form-container,
+    .form-group input,
+    .form-group select,
+    .form-group textarea {
+        max-width: 100%;
+        box-sizing: border-box;
     }
 
     .section-title {
         font-size: 1.5rem;
+        margin-bottom: 2rem;
     }
 
     .group-selector-container {

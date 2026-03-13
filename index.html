@@ -115,12 +115,14 @@
                 </div>
                 <h1 class="section-title">Weekly Timetable</h1>
                 <div class="group-selector-container">
-                    <select class="group-select" onchange="app.setGroup(this.value)">
-                        <!-- Dynamic Options -->
-                    </select>
-                    <select class="semester-select" onchange="app.setSemester(this.value)">
-                        <!-- Dynamic Options -->
-                    </select>
+                    <div class="selector-form">
+                        <select class="group-select" onchange="app.setGroup(this.value)">
+                            <!-- Dynamic Options -->
+                        </select>
+                        <select class="semester-select" onchange="app.setSemester(this.value)">
+                            <!-- Dynamic Options -->
+                        </select>
+                    </div>
                     <button class="print-btn" onclick="app.printTimetable()">
                         <i class="fas fa-print"></i> Print
                     </button>
@@ -157,7 +159,68 @@
                     <i class="fas fa-arrow-left"></i> Home
                 </div>
                 <h1 class="section-title">Lost & Found</h1>
-                <div id="lostfound-container">
+                
+                <!-- Report Found Item Section -->
+                <div class="report-section" style="margin-bottom: 2.5rem;">
+                    <div class="report-cta" style="text-align: center;">
+                        <p style="margin-bottom: 1rem; color: var(--text-muted); font-size: 0.95rem;">Found something? Help your fellow students by reporting it.</p>
+                        <button class="report-btn" onclick="app.toggleReportForm()">
+                            <i class="fas fa-plus-circle"></i> Report Found Item
+                        </button>
+                    </div>
+
+                    <!-- Hidden Form -->
+                    <div id="report-form-container" class="form-container" style="display: none; margin-top: 2rem;">
+                        <form id="found-item-form" onsubmit="app.handleFormSubmit(event)">
+                            <div class="form-grid">
+                                <div class="form-group">
+                                    <label for="itemName">Item Name</label>
+                                    <input type="text" id="itemName" name="itemName" required placeholder="e.g. Blue Water Bottle">
+                                </div>
+                                <div class="form-group">
+                                    <label for="itemCategory">Item Category</label>
+                                    <select id="itemCategory" name="itemCategory" required>
+                                        <option value="">Select Category</option>
+                                        <option value="ID Card">ID Card</option>
+                                        <option value="Book">Book</option>
+                                        <option value="Calculator">Calculator</option>
+                                        <option value="Wallet">Wallet</option>
+                                        <option value="Other">Other</option>
+                                    </select>
+                                </div>
+                                <div class="form-group full-width">
+                                    <label for="description">Description</label>
+                                    <textarea id="description" name="description" rows="3" required placeholder="Describe the item..."></textarea>
+                                </div>
+                                <div class="form-group">
+                                    <label for="locationFound">Location Found</label>
+                                    <input type="text" id="locationFound" name="locationFound" required placeholder="e.g. Library 2nd Floor">
+                                </div>
+                                <div class="form-group">
+                                    <label for="dateFound">Date Found</label>
+                                    <input type="date" id="dateFound" name="dateFound" required>
+                                </div>
+                                <div class="form-group">
+                                    <label for="contactName">Contact Name</label>
+                                    <input type="text" id="contactName" name="contactName" required placeholder="Your Name">
+                                </div>
+                                <div class="form-group">
+                                    <label for="contactNumber">Contact Number</label>
+                                    <input type="tel" id="contactNumber" name="contactNumber" required placeholder="Your Phone Number">
+                                </div>
+                                <div class="form-group full-width">
+                                    <label for="itemImage">Upload Image (Max 1MB)</label>
+                                    <input type="file" id="itemImage" name="itemImage" accept="image/*" required>
+                                </div>
+                            </div>
+                            <button type="submit" class="submit-btn" id="submitBtn">
+                                <i class="fas fa-paper-plane"></i> Submit Report
+                            </button>
+                        </form>
+                    </div>
+                </div>
+
+                <div id="lostfound-items-container" class="grid-items">
                     <!-- Dynamic Content -->
                 </div>
             </section>
@@ -167,10 +230,12 @@
                     <i class="fas fa-arrow-left"></i> Home
                 </div>
                 <h1 class="section-title">Contact Us</h1>
+                <!-- DATA ENTRY: Edit your contact email here -->
                 <div class="info-item">
                     <h3>Email</h3>
                     <p>balajinamana14@gmail.com</p>
                 </div>
+                <!-- DATA ENTRY: Edit your WhatsApp link here -->
                 <div class="info-item">
                     <h3>WhatsApp</h3>
                     <p>Directly chat with our helpdesk</p>
