@@ -14,7 +14,7 @@ const app = {
         // 2. Publish your Google Sheet as CSV and paste the link here:
         lfCsvURL: 'https://docs.google.com/spreadsheets/d/e/2PACX-1vQngOXK-Hw2w17WiQcTfnd0t0IpaZIhg2Yb4ztX_tme2MvtK2Z3OeEHz_qkfAagkyliyK6UKiOFGn4a/pub?output=csv',
         // 3. (For images) Get a FREE API key from https://api.imgbb.com/ and paste it here:
-        imgbbApiKey: 'ec4afa2c3f668e3ab6666840498d29f9'
+        imgbbApiKey: '1c06821d3f5d0ff741addf1fae72e990'
     },
 
     // --- CONFIGURATION: ADD GROUPS, SEMESTERS, AND CSV LINKS HERE ---
@@ -207,24 +207,59 @@ const app = {
     },
 
     async fetchCSV(url) {
-        const response = await fetch(url);
+        // Add cache-buster to ensure fresh data
+        const buster = `&cb=${Date.now()}`;
+        const finalUrl = url.includes('?') ? (url + buster) : (url + '?' + buster.substring(1));
+        
+        console.log(`[CSV] Fetching: ${finalUrl}`);
+        const response = await fetch(finalUrl);
+        if (!response.ok) {
+            console.error('CSV fetch failed:', response.status, response.statusText);
+            throw new Error(`HTTP ${response.status}`);
+        }
         const text = await response.text();
+        // Guard: if Google returned an HTML error page instead of CSV
+        if (text.trim().startsWith('<')) {
+            console.error('Got HTML instead of CSV. Sheet may not be published. First 200 chars:', text.substring(0, 200));
+            throw new Error('Sheet returned HTML instead of CSV. Make sure it is published to web.');
+        }
+        console.log(`CSV fetched OK (${text.length} chars). First row:`, text.split('\n')[0]);
         return this.parseCSV(text);
     },
 
     parseCSV(text) {
-        const lines = text.split('\n');
+        // RFC-4180 compliant parser — handles quoted fields with commas inside
+        const splitRow = (row) => {
+            const result = [];
+            let current = '';
+            let inQuotes = false;
+            for (let i = 0; i < row.length; i++) {
+                const ch = row[i];
+                if (ch === '"') {
+                    if (inQuotes && row[i + 1] === '"') { current += '"'; i++; } // escaped quote
+                    else { inQuotes = !inQuotes; }
+                } else if (ch === ',' && !inQuotes) {
+                    result.push(current.trim());
+                    current = '';
+                } else {
+                    current += ch;
+                }
+            }
+            result.push(current.trim());
+            return result;
+        };
+
+        const lines = text.split('\n').filter(l => l.trim() !== '');
         if (lines.length === 0) return [];
 
-        // Normalize headers: remove spaces and lowercase for robust mapping
-        const headers = lines[0].split(',').map(h => h.trim().replace(/\s+/g, '').toLowerCase());
+        // Normalize headers: remove spaces and lowercase
+        const headers = splitRow(lines[0]).map(h => h.replace(/\s+/g, '').toLowerCase());
+        console.log('CSV headers found:', headers);
 
-        return lines.slice(1).filter(line => line.trim() !== '').map(line => {
-            const values = line.split(',').map(v => v.trim());
+        return lines.slice(1).map(line => {
+            const values = splitRow(line);
             const obj = {};
-            headers.forEach((header, i) => {
-                obj[header] = values[i] || '';
-            });
+            headers.forEach((header, i) => { obj[header] = values[i] || ''; });
             return obj;
         });
     },
@@ -370,8 +405,24 @@ const app = {
             form.reset();
             this.toggleReportForm();
 
-            // Refresh list after a short delay (Google Sheets might take a second to update CSV)
-            setTimeout(() => this.fetchLFItems(), 3000);
+            // Show live countdown while waiting for Google Sheets to propagate
+            const lfContainer = document.getElementById('lostfound-items-container');
+            let secondsLeft = 5;
+            const updateCountdown = () => {
+                lfContainer.innerHTML = `
+                    <div style="grid-column:1/-1; text-align:center; padding:3rem;">
+                        <i class="fas fa-sync-alt fa-spin fa-2x" style="color:var(--accent);"></i>
+                        <p style="margin-top:1rem; font-size:1rem;">Refreshing list in <strong>${secondsLeft}s</strong>...</p>
+                        <p style="font-size:0.8rem; color:var(--text-muted);">Waiting for Google Sheets to update</p>
+                    </div>`;
+                if (secondsLeft > 0) {
+                    secondsLeft--;
+                    setTimeout(updateCountdown, 1000);
+                } else {
+                    this.fetchLFItems();
+                }
+            };
+            updateCountdown();
 
         } catch (error) {
             console.error('Submission Error:', error);
@@ -383,32 +434,43 @@ const app = {
     },
 
     // Uploads an image to ImgBB and returns the public URL.
-    // Images are hosted for free — no Google Drive permission needed.
     async uploadToImgBB(file) {
         if (!this.state.imgbbApiKey || this.state.imgbbApiKey === 'YOUR_IMGBB_API_KEY_HERE') {
-            // No API key: fall back to compressed base64 (may still hit Sheet limits)
-            console.warn('ImgBB API key not set. Falling back to Base64. Get a free key at https://api.imgbb.com/');
-            return await this.compressImage(file);
+            throw new Error('ImgBB API key is not configured. Get a free key at https://api.imgbb.com/ and add it to script.js');
         }
 
+        console.log('[ImgBB] Compressing image...');
         const compressed = await this.compressImage(file);
-        // Remove the data:image/jpeg;base64, prefix for the ImgBB API
         const base64Data = compressed.split(',')[1];
+        console.log(`[ImgBB] Compressed size: ${Math.round(base64Data.length / 1024)}KB. Uploading...`);
 
         const formData = new FormData();
         formData.append('image', base64Data);
 
-        const response = await fetch(`https://api.imgbb.com/1/upload?key=${this.state.imgbbApiKey}`, {
-            method: 'POST',
-            body: formData
-        });
+        let response;
+        try {
+            response = await fetch(`https://api.imgbb.com/1/upload?key=${this.state.imgbbApiKey}`, {
+                method: 'POST',
+                body: formData
+            });
+        } catch (networkErr) {
+            throw new Error(`Network error contacting ImgBB: ${networkErr.message}. Check your internet connection.`);
+        }
+
+        if (!response.ok) {
+            throw new Error(`ImgBB server returned HTTP ${response.status}. The API key may be invalid.`);
+        }
 
         const result = await response.json();
+        console.log('[ImgBB] API response:', result);
+
         if (result.success) {
-            return result.data.display_url; // Use display_url — more reliable for <img> embedding
+            console.log('[ImgBB] Upload success! URL:', result.data.display_url);
+            return result.data.display_url;
         } else {
-            console.error('ImgBB upload failed:', result);
-            return ''; // Return empty on failure
+            // ImgBB returns error details in result.error
+            const errMsg = result.error?.message || JSON.stringify(result);
+            throw new Error(`ImgBB upload failed: ${errMsg}`);
         }
     },
 
@@ -457,7 +519,7 @@ const app = {
         const url = this.state.lfCsvURL;
         const container = document.getElementById('lostfound-items-container');
 
-        if (url === 'https://docs.google.com/spreadsheets/d/e/2PACX-1vQngOXK-Hw2w17WiQcTfnd0t0IpaZIhg2Yb4ztX_tme2MvtK2Z3OeEHz_qkfAagkyliyK6UKiOFGn4a/pub?gid=0&single=true&output=csv' || !url) {
+        if (!url) {
             container.innerHTML = '<p style="text-align: center; color: var(--text-muted);">Please configure the Google Sheets CSV link in script.js to see reported items.</p>';
             return;
         }
@@ -469,7 +531,15 @@ const app = {
             this.renderLFItems(items);
         } catch (error) {
             console.error('Fetch LF Error:', error);
-            container.innerHTML = '<p style="text-align: center; color: red;">Error fetching items from Google Sheets.</p>';
+            container.innerHTML = `
+                <div style="grid-column: 1/-1; text-align: center; padding: 3rem; color: #ff4d4d;">
+                    <i class="fas fa-exclamation-triangle fa-2x"></i>
+                    <p style="margin-top: 1rem; font-weight: 600;">Error fetching items</p>
+                    <p style="font-size: 0.85rem; opacity: 0.8;">${error.message}</p>
+                    <button class="back-btn" onclick="app.fetchLFItems()" style="margin-top: 1rem; padding: 0.5rem 1rem;">
+                        <i class="fas fa-redo"></i> Try Again
+                    </button>
+                </div>`;
         }
     },
 
@@ -480,7 +550,9 @@ const app = {
             return;
         }
 
-        container.innerHTML = data.map(item => {
+        console.log(`[LF] Rendering ${data.length} items from sheet.`);
+
+        container.innerHTML = data.map((item, idx) => {
             // Using lowercase keys normalized in parseCSV
             const name = item.contactname || '';
             const number = item.contactnumber || '';
@@ -490,16 +562,21 @@ const app = {
             const loc = item.locationfound || 'Unknown';
             const desc = item.description || 'No description provided.';
             const image = item.image || item.imageurl || '';
+            // Only use real URLs — skip base64 strings (they get truncated in Google Sheets)
+            const isValidImageUrl = image && image.startsWith('http');
+            console.log(`[LF] Item: "${itemName}" | image: "${image.substring(0, 80)}${image.length > 80 ? '…' : ''}"`);
 
             const contactLabel = name ? `Contact ${name}` : (number ? `Contact ${number}` : 'No Contact Info');
             const whatsappMsg = `Hi ${name || 'there'}, I am inquiring about the ${itemName} you found on ${date}.`;
+            const placeholderIcon = `<i class="fas fa-box item-img-placeholder"></i>`;
+            const imgHtml = isValidImageUrl
+                ? `<img src="${image}" alt="${itemName}" onerror="this.outerHTML='<i class=\\'fas fa-box item-img-placeholder\\'></i>'">`
+                : placeholderIcon;
 
             return `
             <div class="item-card">
                 <div class="item-img-container">
-                    ${image && image !== ''
-                    ? `<img src="${image}" alt="${itemName}">`
-                    : '<i class="fas fa-box item-img-placeholder"></i>'}
+                    ${imgHtml}
                 </div>
                 <div class="item-details">
                     <span class="item-category-tag">${category}</span>
