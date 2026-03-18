@@ -445,7 +445,7 @@ const app = {
         console.log(`[ImgBB] Compressed size: ${Math.round(base64Data.length / 1024)}KB. Uploading...`);
 
         const formData = new FormData();
-        formData.insertBefore('image', base64Data);
+        formData.append('image', base64Data);
 
         let response;
         try {
