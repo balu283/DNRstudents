@@ -210,7 +210,7 @@ const app = {
         // Add cache-buster to ensure fresh data
         const buster = `&cb=${Date.now()}`;
         const finalUrl = url.includes('?') ? (url + buster) : (url + '?' + buster.substring(1));
-        
+
         console.log(`[CSV] Fetching: ${finalUrl}`);
         const response = await fetch(finalUrl);
         if (!response.ok) {
@@ -299,12 +299,13 @@ const app = {
             materials: [
                 { Title: 'Mathematics', Link: '#', Group: 'Group A', Semester: 'Semester 1' },
                 { Title: 'Calculus Advanced', Link: '#', Group: 'Group B', Semester: 'Semester 1' },
-                { Title: 'Data Structures', Link: 'https://limewire.com/d/3aijV#QcSqGKPg1S', Group: 'BSC-CS-2', Semester: 'Semester 2' },
+                { Title: 'Data Structures', Link: 'https://drive.google.com/file/d/1Cl4TV2Rzb5Tb9aeIgfo_QunMsYXIZ5pR/view?usp=drive_link', Group: 'BSC-CS-2', Semester: 'Semester 2' },
                 { Title: 'Algorithms', Link: '#', Group: 'Group B', Semester: 'Semester 2' },
                 { Title: 'Computer Networks', Link: '#', Group: 'Group A', Semester: 'Semester 1' },
-                { Title: 'ARTIFICIAL INTELLIGENCE', Link: '#', Group: 'BSC-CS-2', Semester: 'Semester 2' },
-                { Title: 'DLD(Digital Logic Design)', Link: '#', Group: 'BSC-CS-2', Semester: 'Semester 2' },
+                { Title: 'ARTIFICIAL INTELLIGENCE', Link: 'https://drive.google.com/file/d/1aNqAEbZkK0qAIZPmwX63tAEPgoavm21C/view?usp=drive_link', Group: 'BSC-CS-2', Semester: 'Semester 2' },
+                { Title: 'DLD(Digital Logic Design)', Link: 'https://dnrcollege.org/2024/eContent/ELE/1N.pdf', Group: 'BSC-CS-2', Semester: 'Semester 2' },
                 { Title: 'OA (Office Automation', Link: '#', Group: 'BSC-CS-2', Semester: 'Semester 1' },
+
                 { Title: 'C-Programming', Link: 'https://drive.google.com/file/d/1DFUBzYd18INl7E5Wnp4i4lRYo_UwvNfg/view?usp=drivesdk', Group: 'BSC-CS-2', Semester: 'Semester 1' }
             ],
 
